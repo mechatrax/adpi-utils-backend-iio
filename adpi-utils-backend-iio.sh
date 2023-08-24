@@ -115,7 +115,7 @@ set_gpio ()
     value=1
     ;;
   *)
-    echo "Invalid value $2"
+    echo "Invalid value $2" >&2
     return 1
     ;;
   esac
@@ -162,7 +162,7 @@ set_scale ()
     fi
   done
   
-  echo "Invalid value $1"
+  echo "Invalid value $1" >&2
   
   return 1
 }
@@ -197,7 +197,7 @@ set_gain ()
     fi
   done
   
-  echo "Invalid value $1"
+  echo "Invalid value $1" >&2
   
   return 1
 }
@@ -324,12 +324,6 @@ get_voltage ()
 #
 adpi_get ()
 {
-  if [ "$IIO_PATH" = "" ]
-  then
-    echo "Cannot access device"
-    return 1
-  fi
-
   case $1 in
     frequency)
       get_freq
@@ -362,12 +356,6 @@ adpi_get ()
 #
 adpi_set ()
 {
-  if [ "$IIO_PATH" = "" ]
-  then
-    echo "Cannot access device"
-    return 0
-  fi
-
   case $1 in
     frequency)
       set_freq $2
