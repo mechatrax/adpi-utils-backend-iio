@@ -1,3 +1,12 @@
+adpi-utils-backend-iio (1.0.3) bullseye; urgency=medium
+
+  * debian/control: Add Uploaders
+  * adpi-utils-backend-iio.sh
+    - Fix to redirect error messages to stderr
+    - Remove unused error messages
+
+ -- Masahiro Honda <honda@mechatrax.com>  Thu, 24 Aug 2023 18:35:56 +0900
+
 adpi-utils-backend-iio (1.0.2) bullseye; urgency=medium
 
   * debian/compat: Deleted
