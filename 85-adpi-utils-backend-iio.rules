@@ -1,0 +1,3 @@
+ACTION=="add", SUBSYSTEM=="iio", ATTRS{name}=="ad7794", TAG+="systemd", ENV{SYSTEMD_WANTS}+="adpi-utils-backend-iio-init@%k.service"
+ACTION=="add", SUBSYSTEM=="i2c", ATTRS{name}=="mcp23008", RUN+="/usr/lib/adpi-utils-backend-iio/export_gpio.sh %k"
+ACTION=="add", KERNEL=="i2c-1", SUBSYSTEM=="i2c-dev", TAG+="systemd"
