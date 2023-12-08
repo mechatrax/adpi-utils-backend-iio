@@ -1,6 +1,5 @@
 ./adpi-utils-backend-iio.sh /usr/lib/adpi-utils-backend-iio/
 ./device.conf /usr/lib/adpi-utils-backend-iio/
-./export_gpio.sh /usr/lib/adpi-utils-backend-iio/
 ./get_device_params.sh /usr/lib/adpi-utils-backend-iio/
 ./85-adpi-utils-backend-iio.rules /lib/udev/rules.d/
 ./adpi-utils-backend-iio-init@.service /lib/systemd/system/

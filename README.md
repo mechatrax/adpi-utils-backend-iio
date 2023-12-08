@@ -12,9 +12,6 @@ ADPi のデバイスを定義した設定ファイルです。
 ### /lib/systemd/system/adpi-utils-backend-iio-init<span>@</span>.service  
 ADPi の初期化を行うサービスの設定ファイルです。
 
-### /usr/lib/adpi-utils/export_gpio.sh  
-GPIO の初期化を行うスクリプトファイルです。
-
 ### /usr/lib/adpi-utils-backend-iio/adpi-utils-backend-iio.sh  
 IIO を利用して ADPi の操作を行うスクリプトファイルです。
 

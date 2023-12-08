@@ -4,20 +4,35 @@ set -e
 
 #
 # Usage: adpi-utils-backend-iio.sh \
-#          device=<DEV_NAME> adc=<ADC_SPI> eeprom=<EEPROM_I2C> gpio=<GPIO_I2C> \
+#          device=<DEV_NAME> adc=<ADC_SPI> eeprom=<EEPROM_I2C> \
 #          { get | set } <PARAM> [VALUE [,...]]
 #
 ARGS=($@)
+OPTS=()
 
-DEV_NAME=$(echo ${ARGS[0]} | cut -d= -f2)
-SPI_NAME=$(echo ${ARGS[1]} | cut -d= -f2)
-EEPROM_NAME=$(echo ${ARGS[2]} | cut -d= -f2)
-GPIO_NAME=$(echo ${ARGS[3]} | cut -d= -f2)
+for arg in ${ARGS[@]}
+do
+  case "$arg" in
+  device=*)
+    DEV_NAME=$(echo $arg | cut -d= -f2)
+    ;;
+  adc=*)
+    SPI_ADDR=$(echo $arg | cut -d= -f2)
+    ;;
+  eeprom=*)
+    EEPROM_ADDR=$(echo $arg | cut -d= -f2)
+    ;;
+  *=*)
+    ;;
+  *)
+    OPTS=(${OPTS[@]} $arg)
+    ;;
+  esac
+done
 
 LIB_PATH=/usr/lib/adpi-utils-backend-iio/
-IIO_PATH=$(find /sys/bus/spi/devices/${SPI_NAME}/iio:device* -maxdepth 0)
-EEPROM_PATH=/sys/bus/i2c/devices/${EEPROM_NAME}/eeprom
-GPIO_PATH=/sys/bus/i2c/devices/${GPIO_NAME}/gpio
+IIO_PATH=$(find /sys/bus/spi/devices/${SPI_ADDR}/iio:device* -maxdepth 0)
+EEPROM_PATH=/sys/bus/i2c/devices/${EEPROM_ADDR}/eeprom
 
 FREQ_NODE=${IIO_PATH}/sampling_frequency
 SCALE_NODE=${IIO_PATH}/in_voltage-voltage_scale
@@ -95,32 +110,22 @@ set_gpio ()
     return 2
   fi
   
-  if [ ! -e "$GPIO_PATH" ]
-  then 
-    return 1
-  fi
+  local line
   
-  local chip
-  local base
-  local value
-  
-  chip=$(find ${GPIO_PATH}/gpiochip*/ -maxdepth 0)
-  base=$(cat ${chip}/base)
+  line="${DEV_NAME}$(echo $SPI_ADDR | cut -d\. -f2)_ch$(($1 + $INDEX_OFFSET))"
   
   case $2 in
   0|off)
-    value=0
+    gpioget --bias=pull-down $(gpiofind "$line") > /dev/null
     ;;
   1|on)
-    value=1
+    gpioset --bias=disable $(gpiofind "$line")=1
     ;;
   *)
     echo "Invalid value $2" >&2
     return 1
     ;;
   esac
-  
-  echo $value > ${chip}/subsystem/gpio$(($base + $1 + $INDEX_OFFSET))/value
 }
 
 #
@@ -212,27 +217,30 @@ get_gpio ()
     return 2
   fi
   
-  if [ ! -e "$GPIO_PATH" ]
-  then 
+  local line
+  
+  line="${DEV_NAME}$(echo $SPI_ADDR | cut -d\. -f2)_ch$(($1 + $INDEX_OFFSET))"
+ 
+  if [ "$line" = "" ]
+  then
+    echo "Invalid value $1" >&2
     return 1
   fi
-  
-  local chip
-  local base
+
   local value
   
-  chip=$(find ${GPIO_PATH}/gpiochip*/ -maxdepth 0)
-  base=$(cat ${chip}/base)
-  value=$(cat ${chip}/subsystem/gpio$(($base + $1 + $INDEX_OFFSET))/value)
+  value=$(gpioinfo $(gpiofind $line | cut -d\  -f1) | grep $line)
   
   case $value in
-  0)
+  *input*)
     echo "off"
     ;;
-  1)
+  *output*)
     echo "on"
     ;;
   *)
+    echo "Unknown value $value" >&2
+    return 1
     ;;
   esac
 }
@@ -395,13 +403,13 @@ done
 #
 status=2
 
-case ${ARGS[4]} in
+case ${OPTS[0]} in
   get)
-    adpi_get ${ARGS[@]:5}
+    adpi_get ${OPTS[@]:1}
     status=$?
     ;;
   set)
-    adpi_set ${ARGS[@]:5}
+    adpi_set ${OPTS[@]:1}
     status=$?
     ;;
   *)

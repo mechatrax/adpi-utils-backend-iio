@@ -1,3 +1,10 @@
+adpi-utils-backend-iio (2.0.0) bookworm; urgency=medium
+
+  * Change to use gpiod for GPIO operation
+  * debian/copyright: Update contact information
+
+ -- Yuta Kiyonaga <kiyonaga@mechatrax.com>  Fri, 08 Dec 2023 11:15:07 +0900
+
 adpi-utils-backend-iio (1.0.4) bookworm; urgency=medium
 
   * Change initialization process to use udev rules
