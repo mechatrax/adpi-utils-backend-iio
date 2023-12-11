@@ -11,7 +11,7 @@ Vcs-browser: https://github.com/mechatrax/adpi-utils-backend-iio
 
 Package: adpi-utils-backend-iio
 Architecture: all
-Depends: ${misc:Depends}, bc, adpi-firmware, raspberrypi-kernel-mtx
+Depends: ${misc:Depends}, bc, adpi-firmware (>= 3.0.0), gpiod
 Provides: adpi-utils-backend
 Conflicts: adpi-utils-backend
 Replaces: adpi-utils-backend
