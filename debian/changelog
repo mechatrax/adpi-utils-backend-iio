@@ -1,3 +1,10 @@
+adpi-utils-backend-iio (1.0.3+deb11u1) bullseye; urgency=low
+
+  * debian/copyright: Update contact information
+  * debian/control: Add Uploaders
+
+ -- Masahiro Honda <honda@mechatrax.com>  Mon, 11 Dec 2023 18:12:02 +0900
+
 adpi-utils-backend-iio (1.0.3) bullseye; urgency=medium
 
   * debian/control: Add Uploaders
